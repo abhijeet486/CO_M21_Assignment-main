@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": ["/mnt/c/Users/ABHIJEET/Desktop/CO_M21_Assignment-main/Simple-Assembler", 
+        "/mnt/c/Users/ABHIJEET/Desktop/CO_M21_Assignment-main/Simple-Assembler/src",
+        "/mnt/c/Users/ABHIJEET/Desktop/CO_M21_Assignment-main/Simple-Assembler/src/ISA.py",
+    ]
+}
