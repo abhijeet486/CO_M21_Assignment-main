@@ -47,14 +47,6 @@ class ISA16bit:
             'r6' : '110',
             'FLAGS' : '111'
             }
-        self.type = {
-            'A': {"o":1, "u":2, "r1":1, "r2":1, "r3":1, "imm":0, "mem":0},
-            'B': {"o":1, "u":0, "r1":1, "r2":0, "r3":0, "imm":8, "mem":0},
-            'C': {"o":1, "u":5, "r1":1, "r2":1, "r3":0, "imm":0, "mem":0},
-            'D': {"o":1, "u":0, "r1":1, "r2":0, "r3":0, "imm":0, "mem":8},
-            'E': {"o":1, "u":3, "r1":0, "r2":0, "r3":0, "imm":0, "mem":8},
-            'F': {"o":1,"u":11, "r1":0, "r2":0, "r3":0, "imm":0, "mem":0}
-        }
 
     def update_register(self,r,value):
         self.registers[r] = value
@@ -92,13 +84,13 @@ class ISA16bit:
     def execute(self,str,type):
         w = str.split(" ")
         execute_table={
-            "00000":"self.registers[w[1]]=int(self.registers[w[2]]) + int(self.registers[w[3]])",
-            "00001":"if (self.registers[w[2]]>self.registers[w[3]]): self.registers[w[1]] =int(self.registers[w[2]])- int(self.registers[w[3]]) \nelse: self.registers['FLAGS']='0000000000001000'",
-            "00010":"self.registers[w[1]]=w[2][1:]",
-            "00011":"self.registers[w[1]]=self.registers[w[2]]",
-            "00110":"self.registers[w[1]]=int(self.registers[w[2]])*int(self.registers[w[3]])",
-            "00111":"self.registers['r0']=int(self.registers[w[2]])/int(self.registers[w[3]])\nself.registers['r1']=int(self.registers[w[2]]) % int(self.registers[w[3]])"
-        }
+            "00000":"self.registers[w[1]] = '{:016b}'.format(int(self.registers[w[2]],2) + int(self.registers[w[3]],2))",
+            "00001":"if (self.registers[w[2]]>self.registers[w[3]]): self.registers[w[1]] = '{:016b}'.format(int(self.registers[w[2]],2)- int(self.registers[w[3]],2))\nelse: self.registers['FLAGS']='0000000000001000'",
+            "00010":"self.registers[w[1]] = '{:016b}'.format(int(w[2][1:]))",
+            "00011":"self.registers[w[1]] = self.registers[w[2]]",
+            "00110":"self.registers[w[1]]='{:016b}'.format(int(self.registers[w[2]],2)*int(self.registers[w[3]],2))",
+            "00111":"d=int(self.registers[w[1]],2)//int(self.registers[w[2]],2)\nr =int(self.registers[w[1]],2) % int(self.registers[w[2]],2)\nself.registers['r0']='{:016b}'.format(d)\nself.registers['r1']='{:016b}'.format(r)"
+        } 
         if(w[0]=="mov"):
             if(w[2] in ["r0","r1","r2","r3","r4","r5","r6","FLAGS"]):
                 opcode = self.opcode_table[w[0]][1][0]
@@ -107,7 +99,26 @@ class ISA16bit:
         else:
             opcode = self.opcode_table[w[0]][0]
         exec(execute_table[opcode])
-        
+    
     def binary(self,str,type):
         w = str.split(" ")
-        return(self.opcode_table[w[0]]+("0"*self.type[type]["u"]))
+        if(type=='A'):
+            s = self.opcode_table[w[0]][0] + ("0"*2) + self.registers_address[w[1]] + self.registers_address[w[2]] + self.registers_address[w[3]]
+        elif(type=="B"):
+            if(w[0]=="mov"):
+                s = self.opcode_table[w[0]][0][0] + self.registers_address[w[1]] + '{:08b}'.format(int(w[2][1:]))
+            else:
+                s = self.opcode_table[w[0]][0] + self.registers_address[w[1]]  + '{:08b}'.format(int(w[2][1:]))
+        elif(type=='C'):
+            if(w[0]=='mov'):
+                s = self.opcode_table[w[0]][1][0] + ("0"*5) + self.registers_address[w[1]] + self.registers_address[w[2]]
+            else:
+                s = self.opcode_table[w[0]][0] + ("0"*5) + self.registers_address[w[1]] + self.registers_address[w[2]] 
+        elif(type=='D'):
+            s = self.opcode_table[w[0]][0] + self.registers_address[w[1]] + '{:08b}'.format(int(w[2][1:]))
+        elif(type=='E'):
+            s = self.opcode_table[w[0]][0] + ("0"*3) + '{:08b}'.format(int(w[1][1:]))
+        elif(type=='F'):
+            s = self.opcode_table[w[0]][0] + ("0"*11)
+        return(s)
+
