@@ -1,3 +1,6 @@
+from io import open_code
+
+
 nonmem = 0
 mem = 1
 
@@ -7,8 +10,7 @@ class ISA16bit:
         self.opcode_table = { # inst : (opcode,type of instruction,number of operands, number of registers, immx)
             "add": ('00000',nonmem,'A',2,3,False),
             "sub": ('00001',nonmem,'A',2,3,False),
-            "mov": ('00010',nonmem,'B',2,1,True),
-            "mov": ('00011',nonmem,'C',2,2,False),
+            "mov": [('00010',nonmem,'B',2,1,True),('00011',nonmem,'C',2,2,False)],
             "ld": ('00100',mem,'D',2,1,False),
             "st": ('00101',mem,'D',2,1,False),
             "mul": ('00110',nonmem,'A',2,3,False),
@@ -27,6 +29,7 @@ class ISA16bit:
             "hlt": ('10011',nonmem,'F',0,0,False)
         }
         self.registers={
+            'r0' : '0000000000000000',
             'r1' : '0000000000000000',
             'r2' : '0000000000000000',
             'r3' : '0000000000000000',
@@ -36,13 +39,14 @@ class ISA16bit:
             'FLAGS' :'0000000000000000'
             }
         self.registers_address = {
-            'r1' : '000', 
-            'r2' : '001',
-            'r3' : '010',
-            'r4' : '011',
-            'r5' : '100',
-            'r6' : '101',
-            'FLAGS' : '110'
+            'r0' : '000', 
+            'r1' : '001',
+            'r2' : '010',
+            'r3' : '011',
+            'r4' : '100',
+            'r5' : '101',
+            'r6' : '110',
+            'FLAGS' : '111'
             }
         self.type = {
             'A': {"o":5, "u":2, "r1":3, "r":3, "r3":3},
@@ -86,3 +90,22 @@ class ISA16bit:
             return(False)
         elif(t=="F"):
             return(str=="hlt")
+    def execute(self,str,type):
+        w = str.split(" ")
+        execute_table={
+            "00000":"self.registers[w[1]]=int(self.registers[w[2]]) + int(self.registers[w[3]])",
+            "00001":"self.registers[w[2]]>self.registers[w[3]]?self.registers[w[1]]=int(self.registers[w[2]])- int(self.registers[w[3]]):self.registers['FLAGS']='0000000000001000'",
+            "00010":"self.registers[w[1]]=w[2][1:]",
+            "00011":"self.registers[w[1]]=self.registers[w[2]]",
+            "00110":"self.registers[w[1]]=int(self.registers[w[2]])*int(self.registers[w[3]])",
+            "00111":"self.registers['r0']=int(self.registers[w[2]])/int(self.registers[w[3]])\nself.registers['r1']=int(self.registers[w[2]]) % int(self.registers[w[3]])"
+        }
+        if(w[0]=="mov"):
+            if(w[2] in ["r0","r1","r2","r3","r4","r5","r6","FLAGS"]):
+                opcode = self.opcode_table[w[0]][1][0]
+            else:
+                opcode = self.opcode_table[w[0]][0][0]
+        else:
+            opcode = self.opcode_table[w[0]][0]
+        exec(execute_table[opcode])
+        

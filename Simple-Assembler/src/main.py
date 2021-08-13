@@ -1,44 +1,25 @@
+from os import truncate
 import sys
 import re
 from assemble import ISA16bit
 
 input = sys.stdin
 
-def type_check(str,t):
-    content = str.split(" ")
-    if(t=="A"):
-        if(content[1] in ["r0","r1","r2","r3","r4","r5","r6"] and (content[2] in ["r0","r1","r2","r3","r4","r5","r6"]) and (content[3] in ["r0","r1","r2","r3","r4","r5","r6"])):
-            return(True)
-        return(False)
-    elif(t=="B"):
-        if(len(content)==3 and content[1] in ["r0","r1","r2","r3","r4","r5","r6"]):
-            try:
-                if(content[2][0]=="$" and ("-" not in content[2]) and int(content[2][1:])>=0):
-                    return(True)
-            except:
-                return(False)
-        return(False)
-    elif(t=="C"):
-        if(len(content)==3):
-            if(content[1] in ["r0","r1","r2","r3","r4","r5","r6"] and content[2] in ["r0","r1","r2","r3","r4","r5","r6"]):
-                return(True)
-        return(False)
-    elif(t=="D"):
-        if(len(content)==3):
-            if(content[1] in ["r0","r1","r2","r3","r4","r5","r6"] and content[2]):
-                return(True)
-        return(False)
-    elif(t=="E"):
-        if(len(content)==2 and content[1]):
-            return(True)
-        return(False)
-    elif(t=="F"):
-        return(str=="hlt")
 
 def check_inst(str):
     w = str.split(" ")
-    type = IS.opcode_table[w[0]][2]
-    return(IS.type_check(str,type))
+    if(w[0]=='mov'):
+        if(len(w)==3):
+                if(w[2] in ['r0','r1','r2','r3','r4','r5','r6','FLAGS']):
+                    type=IS.opcode_table[w[0]][1][2]
+                elif(w[2][0]=='$'):
+                    type=IS.opcode_table[w[0]][0][2]
+    else:
+        type = IS.opcode_table[w[0]][2]
+    if(IS.type_check(str,type)):
+        IS.execute(str,type)
+        return(True)
+    return(False)
 
 
 def check_line(line):
