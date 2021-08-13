@@ -1,10 +1,9 @@
-from os import truncate
 import sys
 import re
 from assemble import ISA16bit
 
 input = sys.stdin
-
+hlt_count = 0
 
 def check_inst(str):
     w = str.split(" ")
@@ -21,6 +20,7 @@ def check_inst(str):
         return(True)
     return(False)
 
+# add\tr1 r2 r3 -> add r1 r2 r3
 
 def check_line(line):
     line = re.sub(r'(\\[a-zA-Z])+'," ",line)
@@ -34,15 +34,16 @@ def check_line(line):
             print(" Error \n")
         else:
             return(2)
-    else:
-        return(4)
+    else: # " " or ""
+        return (4)
 
 def main():
     for lines in input:
         for line in lines.split("\n"):
             line_type = check_line(line)
             if(line_type!=4):
-                print(line+" ", line_type)
+                print(line+" ", line_type)    
+            IS.registers["FLAGS"] = '0000000000000000'
             #for read in line.split(" "):
              #   ISA.__init__()
               #  ISA.type_check(read)

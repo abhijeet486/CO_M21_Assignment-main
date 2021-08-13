@@ -1,4 +1,3 @@
-from io import open_code
 
 
 nonmem = 0
@@ -49,12 +48,12 @@ class ISA16bit:
             'FLAGS' : '111'
             }
         self.type = {
-            'A': {"o":5, "u":2, "r1":3, "r":3, "r3":3},
-            'B': {"o":5, "r1":3, "imm":8},
-            'C': {"o":5, "u":5, "r1":3,"r2":3},
-            'D': {"o":5, "r1":3 ,"mem":8},
-            'E': {"o":5, "u":3, "mem":8},
-            'F': {"o":5,"u":11}
+            'A': {"o":1, "u":2, "r1":1, "r2":1, "r3":1, "imm":0, "mem":0},
+            'B': {"o":1, "u":0, "r1":1, "r2":0, "r3":0, "imm":8, "mem":0},
+            'C': {"o":1, "u":5, "r1":1, "r2":1, "r3":0, "imm":0, "mem":0},
+            'D': {"o":1, "u":0, "r1":1, "r2":0, "r3":0, "imm":0, "mem":8},
+            'E': {"o":1, "u":3, "r1":0, "r2":0, "r3":0, "imm":0, "mem":8},
+            'F': {"o":1,"u":11, "r1":0, "r2":0, "r3":0, "imm":0, "mem":0}
         }
 
     def update_register(self,r,value):
@@ -94,7 +93,7 @@ class ISA16bit:
         w = str.split(" ")
         execute_table={
             "00000":"self.registers[w[1]]=int(self.registers[w[2]]) + int(self.registers[w[3]])",
-            "00001":"self.registers[w[2]]>self.registers[w[3]]?self.registers[w[1]]=int(self.registers[w[2]])- int(self.registers[w[3]]):self.registers['FLAGS']='0000000000001000'",
+            "00001":"if (self.registers[w[2]]>self.registers[w[3]]): self.registers[w[1]] =int(self.registers[w[2]])- int(self.registers[w[3]]) \nelse: self.registers['FLAGS']='0000000000001000'",
             "00010":"self.registers[w[1]]=w[2][1:]",
             "00011":"self.registers[w[1]]=self.registers[w[2]]",
             "00110":"self.registers[w[1]]=int(self.registers[w[2]])*int(self.registers[w[3]])",
@@ -109,3 +108,6 @@ class ISA16bit:
             opcode = self.opcode_table[w[0]][0]
         exec(execute_table[opcode])
         
+    def binary(self,str,type):
+        w = str.split(" ")
+        return(self.opcode_table[w[0]]+("0"*self.type[type]["u"]))
