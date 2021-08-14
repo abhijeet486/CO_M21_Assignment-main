@@ -4,13 +4,9 @@ def check_errors(instr):
     x=ISA16bit()
     status=False             #Error status
     #Error a
-    for i in x.opcode_table:
-        if instr[0]==i:
-            continue
-        else:
-            status=True
-            print("Typos in instruction name or register name")
-            break
+    if instr[0] not in x.opcode_table:
+        status=True
+        print("Typos in instruction name or register name")
     #Error b    
     #Error c
     #Error d
@@ -34,8 +30,37 @@ def check_errors(instr):
                         break
     #Error f
 
+def check_inst(str,IS,pc,temp_var):
+    w = str.split(" ")
+    if(w[0]=='mov'):
+        if(len(w)==3):
+                if(w[2] in ['R0','R1','R2','R3','R4','R5','R6','FLAGS']):
+                    type=IS.opcode_table[w[0]][1][2]
+                elif(w[2][0]=='$'):
+                    type=IS.opcode_table[w[0]][0][2]
+    else:
+        type = IS.opcode_table[w[0]][2]
+    if(IS.type_check(str,type)):
+        IS.execute(str)
+        print(IS.binary(str,type))
+        return(True)
+    print("Error: Wrong syntax used for instructions , line",pc-temp_var)
+    return(False)
+
+def is_valid_var_dec(w,labels,pc,temp_var):
+    flag = True
+    if(w[1] in labels):
+        print("Error: Misuse of labels as variables, line",pc-temp_var)
+        flag = False
+    if(pc!=temp_var+1):
+        print("Error: Variables not declared at the beginning , line",pc-temp_var)
+        flag = False
+    return(flag)
+
+
 #error g 
 def invalid_var_dec(instr,var):
+    instr = instr.split(" ")
     if var==True:
         if instr[0]=="var":
             print("Variables not declared at the beginning")
