@@ -48,8 +48,6 @@ def main():
     for lines in input:
         for line in lines.split("\n"):
             line_type = check_line(line)
-            if(line_type!=4):
-                print(line+" ", line_type)
 
 if __name__ == "__main__":
     IS = ISA16bit()
