@@ -24,8 +24,8 @@ def convertion(instr,temp_var):
         variables(instr[1])
         temp_var+=1
 
-
 #/////////////////
+
 def check_inst(str):
     w = str.split(" ")
     if(w[0]=='mov'):
@@ -75,7 +75,6 @@ def main():
             line_type = check_line(line)
             if(line_type!=4):
                 print(line+" ", line_type)
-
 
 if __name__ == "__main__":
     IS = ISA16bit()
