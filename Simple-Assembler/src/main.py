@@ -1,9 +1,31 @@
 import sys
 import re
 from assemble import ISA16bit
+import check_error
 
 input = sys.stdin
-hlt_count = 0
+
+#//////////////////////
+
+def instr_limit(lines,temp_var):
+    for i in lines.split("\n"):
+        temp_var+=1
+        if temp_var<=256:
+            continue
+        else:
+            print("No of Instructions exceed ISA limit")
+
+def variables(var_name,add_line,var_dict):
+    var_dict[var_name]=bin(add_line)    
+
+def convertion(instr,temp_var):
+    variables={}
+    if (instr.split()[0])=="var":
+        variables(instr[1])
+        temp_var+=1
+
+
+#/////////////////
 
 def check_inst(str):
     w = str.split(" ")
@@ -45,12 +67,17 @@ def check_line(line):
         return (4)
 
 def main():
+    var_decl_done=False
+    hlt_count = 0
     for lines in input:
         for line in lines.split("\n"):
+            var_decl_done=check_error.invalid_var_dec(line,var_decl_done)
+            hlt_count = 0
             line_type = check_line(line)
             if(line_type!=4):
                 print(line+" ", line_type)
 
+    
 if __name__ == "__main__":
     IS = ISA16bit()
     IS.__init__()
