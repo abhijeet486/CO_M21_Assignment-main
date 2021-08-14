@@ -102,6 +102,7 @@ class ISA16bit:
         else:
             opcode = self.opcode_table[w[0]][0]
         exec(execute_table[opcode])
+        #return updated variables
         return(vars)
     
     def binary(self,str,type,vars,label):

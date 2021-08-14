@@ -41,36 +41,20 @@ def check_inst(str,IS,pc,temp_var):
     else:
         type = IS.opcode_table[w[0]][2]
     if(IS.type_check(str,type)):
-        IS.execute(str)
-        print(IS.binary(str,type))
         return(True)
     print("Error: Wrong syntax used for instructions , line",pc-temp_var)
     return(False)
 
-def is_valid_var_dec(w,labels,pc,temp_var):
+def is_valid_var_dec(w,labels,pc,count_var):
     flag = True
     if(w[1] in labels):
-        print("Error: Misuse of labels as variables, line",pc-temp_var)
+        print("Error: Misuse of labels as variables, line",pc-count_var)
         flag = False
-    if(pc!=temp_var+1):
-        print("Error: Variables not declared at the beginning , line",pc-temp_var)
+    if(pc>count_var):
+        print("Error: Variables not declared at the beginning , line",pc-count_var)
         flag = False
     return(flag)
 
-
-#error g 
-def invalid_var_dec(instr,var):
-    instr = instr.split(" ")
-    if var==True:
-        if instr[0]=="var":
-            print("Variables not declared at the beginning")
-    elif var==False:
-        if instr[0]=="var":
-            pass
-    else:
-        if instr[0]!="var":
-            var=True
-            return(var)
 
 #error h
 def hlt_missing(instr,var):
