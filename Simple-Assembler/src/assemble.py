@@ -67,7 +67,7 @@ class ISA16bit:
             return(False)
         elif(t=="C"):
             if(len(content)==3):
-                if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and content[2] in ["R0","R1","R2","R3","R4","R5","R6"]):
+                if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and content[2] in ["R0","R1","R2","R3","R4","R5","R6","FLAGS"]):
                     return(True)
             return(False)
         elif(t=="D"):
@@ -104,7 +104,7 @@ class ISA16bit:
         exec(execute_table[opcode])
         return(vars)
     
-    def binary(self,str,type,vars):
+    def binary(self,str,type,vars,label):
         w = str.split(" ")
         if(type=='A'):
             s = self.opcode_table[w[0]][0] + ("0"*2) + self.registers_address[w[1]] + self.registers_address[w[2]] + self.registers_address[w[3]]
@@ -121,7 +121,7 @@ class ISA16bit:
         elif(type=='D'):
             s = self.opcode_table[w[0]][0] + self.registers_address[w[1]] + '{:08b}'.format(vars[w[2]][0])
         elif(type=='E'):
-            s = self.opcode_table[w[0]][0] + ("0"*3) + '{:08b}'.format(int(w[1][1:]))
+            s = self.opcode_table[w[0]][0] + ("0"*3) + '{:08b}'.format(int(label[w[1]]))
         elif(type=='F'):
             s = self.opcode_table[w[0]][0] + ("0"*11)
         return(s)
