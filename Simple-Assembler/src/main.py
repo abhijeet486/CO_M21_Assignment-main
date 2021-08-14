@@ -7,16 +7,20 @@ input = sys.stdin
 
 #//////////////////////
 
-def instr_limit(lines,temp_var):
-    for i in lines.split("\n"):
+def instr_limit(instr,temp_var):
+    if (instr=="" or instr==" "):
+        return(temp_var)
+    else:
         temp_var+=1
-        if temp_var<=256:
-            continue
-        else:
-            print("No of Instructions exceed ISA limit")
+    if temp_var<=256:
+        return(temp_var)
+    else:
+        print("No. of Instructions exceed ISA limit")
+        return("exit")
 
 def variables(var_name,add_line,var_dict):
-    var_dict[var_name]=bin(add_line)    
+    var_dict[var_name]=bin(add_line)
+    return(var_dict)    
 
 def convertion(instr,temp_var):
     variables={}
@@ -66,9 +70,12 @@ def check_line(line):
         return (4)
 
 def main():
-    error={"var_decl_done":False,"hlt_count":0}
+    error={"line_no":0,"status":False,"var_decl_done":False,"hlt_count":0}
+    
     for lines in input:
         for line in lines.split("\n"):
+            error["line_no"]=instr_limit(line,error["line_no"])
+            error["status"]=check_error.check_errors()
             error["var_decl_done"]=check_error.invalid_var_dec(line,error["var_decl_done"])
             error["hlt_count"]=check_error.hlt_missing(line,error["hlt_count"])
             for i in error:

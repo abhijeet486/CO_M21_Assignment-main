@@ -1,16 +1,15 @@
 from assemble import ISA16bit
 
-def check_errors(instr):
-    x=ISA16bit()
-    status=False             #Error status
+def check_errors(instr,status):  #Error status
+    x=ISA16bit()       
     #Error a
     for i in x.opcode_table:
         if instr[0]==i:
-            continue
+            return(False)
         else:
             status=True
             print("Typos in instruction name or register name")
-            break
+            return("exit")
     #Error b    
     #Error c
     #Error d
@@ -19,21 +18,21 @@ def check_errors(instr):
         for i in x.opcode_table("mov"):
             if i(-1)==True:
                 if instr[-1]>=1 and instr[-1]<=255:
-                    continue
+                    return(False)
                 else:
                     print("Illegal Immediate values")
-                    break
+                    return("exit")
     else:
         for i in x.opcode_table:
             if instr[0]==i:
                 if x.opcode_table[i][-1]==True:
                     if instr[-1]>=1 and instr[-1]<=255:
-                        continue
+                        return(False)
                     else:
                         print("Illegal Immediate values")
-                        break
-    #Error f
+                        return("exit")
 
+#Error f
 #error g 
 def invalid_var_dec(instr,var):
     if var==True:
