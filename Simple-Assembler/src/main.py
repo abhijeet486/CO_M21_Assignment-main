@@ -16,7 +16,7 @@ def check_inst(str):
     else:
         type = IS.opcode_table[w[0]][2]
     if(IS.type_check(str,type)):
-        IS.execute(str,type)
+        IS.execute(str)
         print(IS.binary(str,type))
         return(True)
     return(False)

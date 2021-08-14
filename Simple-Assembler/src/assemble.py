@@ -81,7 +81,7 @@ class ISA16bit:
             return(False)
         elif(t=="F"):
             return(str=="hlt")
-    def execute(self,str,type):
+    def execute(self,str):
         w = str.split(" ")
         execute_table={
             "00000":"self.registers[w[1]] = '{:016b}'.format(int(self.registers[w[2]],2) + int(self.registers[w[3]],2))",
