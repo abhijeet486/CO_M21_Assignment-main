@@ -19,8 +19,15 @@ def instr_limit(instr,temp_var):
         return("exit")
 
 def variables(var_name,add_line,var_dict):
-    var_dict[var_name]=bin(add_line)
-    return(var_dict)    
+    temp_val=bin(add_line)
+    if len(temp_val)==8:
+        var_dict[var_name]=bin(add_line)
+        return(var_dict)
+    else:
+        diff=8-len(temp_val)
+        temp_val=int(("0"*diff)+str(temp_val))
+        var_dict[var_name]=bin(add_line)
+        return(var_dict)
 
 def convertion(instr,temp_var):
     variables={}
@@ -46,7 +53,6 @@ def check_inst(str):
         return(True)
     return(False)
 
-
 def check_line(line):
     line = re.sub(r'(\\[a-zA-Z])+'," ",line)
     w = line.split(" ")
@@ -71,7 +77,8 @@ def check_line(line):
 
 def main():
     error={"line_no":0,"status":False,"var_decl_done":False,"hlt_count":0}
-    
+    variables={}
+    labels={}
     for lines in input:
         for line in lines.split("\n"):
             error["line_no"]=instr_limit(line,error["line_no"])
