@@ -39,27 +39,25 @@ def invalid_var_dec(instr,var):
     if var==True:
         if instr[0]=="var":
             print("Variables not declared at the beginning")
+            return("exit")
     elif var==False:
         if instr[0]=="var":
-            pass
+            return(False)
     else:
         if instr[0]!="var":
-            var=True
-            return(var)
+            return(True)
 
 #error h
-def hlt_missing(instr,var):
-    if var>1:
+def hlt_missing(instr,hlt_count):
+    if hlt_count>1:
         print("hlt not being used as the last instruction/More than one hlt")
-        return(0)
-    elif var==0:
+        return("exit")
+    if hlt_count==0:
         if instr=="hlt":
-            var+=1
-            return(var)
+            hlt_count+=1
+            return(hlt_count)
         else:
-            return(0)
-    elif var>1:
-
-        pass
-    else:
-        pass
+            return(hlt_count)
+    #if hlt_count==1:
+        hlt_count+=1
+        return(hlt_count) #Needs correction

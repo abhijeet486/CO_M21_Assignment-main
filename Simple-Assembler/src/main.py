@@ -66,16 +66,19 @@ def check_line(line):
         return (4)
 
 def main():
-    var_decl_done=False
-    hlt_count = 0
+    error={"var_decl_done":False,"hlt_count":0}
     for lines in input:
         for line in lines.split("\n"):
-            var_decl_done=check_error.invalid_var_dec(line,var_decl_done)
-            hlt_count = 0
-            line_type = check_line(line)
-            if(line_type!=4):
-                print(line+" ", line_type)
-
+            error["var_decl_done"]=check_error.invalid_var_dec(line,error["var_decl_done"])
+            error["hlt_count"]=check_error.hlt_missing(line,error["hlt_count"])
+            for i in error:
+                if error[i]=="exit":
+                    break
+                else:
+                    line_type = check_line(line)
+                    if(line_type!=4):
+                        print(line+" ", line_type)
+          
 if __name__ == "__main__":
     IS = ISA16bit()
     IS.__init__()
