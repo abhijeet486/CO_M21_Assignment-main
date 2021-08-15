@@ -47,52 +47,64 @@ class ISA16bit:
             'FLAGS' : '111'
             }
 
-    def type_check(self,str,t,var,label):
+    def type_check(self,str,t,var,label,pos):
         content = str.split(" ")
         if(t=="A"):
             if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and (content[2] in ["R0","R1","R2","R3","R4","R5","R6"]) and (content[3] in ["R0","R1","R2","R3","R4","R5","R6"])):
                 return(True)
+            if("FLAGS" in str):
+                print("Error: Illegal use of FLAGS register , line",pos)
+            else:
+                print("Error: Wrong syntax used for instructions , line ",pos)
             return(False)
         elif(t=="B"):
             if(len(content)==3 and content[1] in ["R0","R1","R2","R3","R4","R5","R6"]):
                 try:
-                    if(content[2][0]=="$" and ("-" not in content[2]) and int(content[2][1:])>=0):
-                        return(True)
+                    if(content[2][0]=="$"):
+                        if("-" not in content[2] and int(content[2][1:])>=0 and int(content[2][1:])<=255):
+                            return(True)
+                        print("Error: Illegal Immediate values (less than 0 or more than 255) , line",pos)
                 except:
-                    return(False)
-                print("Error: Wrong syntax used for instructions , line",end="")
-            
+                    pass
+            if("FLAGS" in str):
+                print("Error: Illegal use of FLAGS register , line",pos)
+            print("Error: Wrong syntax used for instructions , line",pos)
             return(False)
         elif(t=="C"):
             if(len(content)==3):
                 if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and content[2] in ["R0","R1","R2","R3","R4","R5","R6","FLAGS"]):
                     return(True)
                 if(content[1]=="FLAGS"):
-                    print("Error: Illegal use of FLAGS register , line",end="")
-            print("Error: Wrong syntax used for instructions , line",end="")
+                    print("Error: Illegal use of FLAGS register , line",pos)
+            print("Error: Wrong syntax used for instructions , line",pos)
             return(False)
         elif(t=="D"):
+            if("FLAGS" in str):
+                    print("Error: Illegal use of FLAGS register , line",pos)
             if(len(content)==3):
                 if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and content[2] in var):
                     return(True)
-                if(content[1] =="FLAGS"):
-                    print("Error: Illegal use of FLAGS register , line",end="")
                 if(content[2] not in var):
-                    print("Error: Use of undefined variables , line",end="")
+                    print("Error: Use of undefined variables , line",pos)
             else:
-                print("Error: Wrong syntax used for instructions , line",end="")
+                print("Error: Wrong syntax used for instructions , line",pos)
             return(False)
         elif(t=="E"):
             if(len(content)==2):
                 if(content[1] in label):
                     return(True)
                 else:
-                    print("Error: Use of undefined labels , line",end="")
+                    print("Error: Use of undefined labels , line ",pos)
             else:
-                print("Error: Wrong syntax used for instructions , line",end="")
+                print("Error: Wrong syntax used for instructions , line ",pos)
+            if("FLAGS" in str):
+                    print("Error: Illegal use of FLAGS register , line",pos)
             return(False)
         elif(t=="F"):
-            return(len(content)==1)
+            if(content[0]=="hlt"):
+                return(True)
+            print("Error: Wrong syntax used for instructions , line ",pos)
+            return(False)
 
 
     def execute(self,str,vars):

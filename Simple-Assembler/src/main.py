@@ -34,7 +34,7 @@ def instr_limit():
                     print("Error: hlt not being used as the last instruction , line",inst_count)
                     return(False)
                 if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",i)):
-                    if(not check_inst(" ".join(w[1:]))):
+                    if(not check_inst(" ".join(w[1:]),inst_count)):
                         print("Error : Typos in instruction name or register name , line",inst_count)
                         return(False)
                     else:
@@ -46,8 +46,10 @@ def instr_limit():
                 elif(re.match("\Avar ([a-zA-Z_]+)([0-9]*)$",i)):
                     if(check_error.is_valid_var_dec(w,labels,temp_var,temp_var-inst_count)):
                         var_dict[w[1]] = []
+                    else:
+                        return(False)
                 elif(w[0] in IS.opcode_table):
-                    if(not check_inst(i)):
+                    if(not check_inst(i,inst_count)):
                         print("Error : Typos in instruction name or register name , line",inst_count)
                         return(False)
                 else:
@@ -56,6 +58,7 @@ def instr_limit():
         print("Error : Missing hlt instruction")
         return(False)
     return(True)
+
 
 def label_table():
     global labels
@@ -66,6 +69,7 @@ def label_table():
                 w = i.split(" ")
                 labels[w[0][:-1]] = inst_count - 1
     input.seek(0)
+
 
 def variable(var):
     global count_var,var_dict
@@ -86,23 +90,16 @@ def gettype(w):
         type = IS.opcode_table[w[0]][2]
     return(type)
 
-def check_inst(str):
+
+def check_inst(str,line_no=pc-count_var):
     global var_dict,hlt_count
     w = str.split(" ")
     type = gettype(w)
-    if(IS.type_check(str,type,var_dict,labels)):
+    if(IS.type_check(str,type,var_dict,labels,line_no)):
         if(w[0]=="hlt"):
             hlt_count+=1
             return(hlt_count==1)
         return(True)
-    if(type!='C' and w[0]!='mov'):
-        print("Error: Illegal use of FLAGS register , line",pc-count_var)
-    if(type=='D'):
-        (pc-count_var)
-    elif(type=='E'):
-        print("Error: Use of undefined labels , line",pc-count_var)
-    else:
-        print("Error: Wrong syntax used for instructions , line",pc-count_var)
     return(False)
 
 
