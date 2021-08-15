@@ -1,5 +1,8 @@
 
 
+import re
+
+
 nonmem = 0
 mem = 1
 
@@ -51,7 +54,7 @@ class ISA16bit:
     def update_register(self,r,value):
         self.registers[r] = value
 
-    def type_check(self,str,t,var):
+    def type_check(self,str,t,var,label):
         content = str.split(" ")
         if(t=="A"):
             if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and (content[2] in ["R0","R1","R2","R3","R4","R5","R6"]) and (content[3] in ["R0","R1","R2","R3","R4","R5","R6"])):
@@ -64,23 +67,41 @@ class ISA16bit:
                         return(True)
                 except:
                     return(False)
+                print("Error: Wrong syntax used for instructions , line",end="")
+            
             return(False)
         elif(t=="C"):
             if(len(content)==3):
                 if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and content[2] in ["R0","R1","R2","R3","R4","R5","R6","FLAGS"]):
                     return(True)
+                if(content[1]=="FLAGS"):
+                    print("Error: Illegal use of FLAGS register , line",end="")
+            print("Error: Wrong syntax used for instructions , line",end="")
             return(False)
         elif(t=="D"):
             if(len(content)==3):
                 if(content[1] in ["R0","R1","R2","R3","R4","R5","R6"] and content[2] in var):
                     return(True)
+                if(content[1] =="FLAGS"):
+                    print("Error: Illegal use of FLAGS register , line",end="")
+                if(content[2] not in var):
+                    print("Error: Use of undefined variables , line",end="")
+            else:
+                print("Error: Wrong syntax used for instructions , line",end="")
             return(False)
         elif(t=="E"):
-            if(len(content)==2 and content[1]):
-                return(True)
+            if(len(content)==2):
+                if(content[1] in label):
+                    return(True)
+                else:
+                    print("Error: Use of undefined labels , line",end="")
+            else:
+                print("Error: Wrong syntax used for instructions , line",end="")
             return(False)
         elif(t=="F"):
             return(len(content)==1)
+
+
     def execute(self,str,vars):
         w = str.split(" ")
         execute_table={

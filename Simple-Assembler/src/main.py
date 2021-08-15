@@ -21,8 +21,8 @@ def instr_limit():
     global inst_count,temp_var,labels
     for lines in input.readlines():
         for i in lines.split("\n"):
-            i = re.sub(r'(\\[a-zA-Z])+'," ",i)
-            if(i!=""):
+            i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
+            if(i!="" and i!=" "):
                 w = i.split(" ")
                 if(w[0]!="var"):
                     inst_count+=1
@@ -33,7 +33,7 @@ def instr_limit():
                 if(i=="hlt" and hlt_count==1):
                     print("Error: hlt not being used as the last instruction , line",inst_count)
                     return(False)
-                if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z0-9]+[ ]*)+",i)):
+                if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",i)):
                     if(not check_inst(" ".join(w[1:]))):
                         print("Error : Typos in instruction name or register name , line",inst_count)
                         return(False)
@@ -56,6 +56,16 @@ def instr_limit():
         print("Error : Missing hlt instruction")
         return(False)
     return(True)
+
+def label_table():
+    global labels
+    for lines in input.readlines():
+        for i in lines.split("\n"):
+            i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
+            if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",i)):
+                w = i.split(" ")
+                labels[w[0][:-1]] = inst_count - 1
+    input.seek(0)
 
 def variable(var):
     global count_var,var_dict
@@ -80,12 +90,19 @@ def check_inst(str):
     global var_dict,hlt_count
     w = str.split(" ")
     type = gettype(w)
-    if(IS.type_check(str,type,var_dict)):
+    if(IS.type_check(str,type,var_dict,labels)):
         if(w[0]=="hlt"):
             hlt_count+=1
             return(hlt_count==1)
         return(True)
-    print("Error: Wrong syntax used for instructions , line",pc-count_var)
+    if(type!='C' and w[0]!='mov'):
+        print("Error: Illegal use of FLAGS register , line",pc-count_var)
+    if(type=='D'):
+        (pc-count_var)
+    elif(type=='E'):
+        print("Error: Use of undefined labels , line",pc-count_var)
+    else:
+        print("Error: Wrong syntax used for instructions , line",pc-count_var)
     return(False)
 
 
@@ -113,14 +130,15 @@ def check_line(line):
 
 def main():
     global pc
+    label_table()
     flag = instr_limit()
     input.seek(0)
-    while(flag):
-            line = input.readline()
-            line = line.split("\n")[0]
-            if(line==""):break
-            pc+=1
-            line_type = check_line(line)
+    if(flag):
+        for line in input.readlines():
+            if(line!=" " or line!="\n"):
+                line = line.split("\n")[0]
+                pc+=1
+                line_type = check_line(line)
     input.close()
 
     

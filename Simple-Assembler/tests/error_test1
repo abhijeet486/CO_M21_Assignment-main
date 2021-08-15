@@ -1,4 +1,6 @@
 var x
+
+   
 mov R1 $4
 mov R2 $4
 cmp R1 R2
