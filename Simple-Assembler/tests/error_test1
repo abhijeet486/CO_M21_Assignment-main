@@ -1,5 +1,6 @@
-var x
+var    x
 
+   
 
 label1: add R1 R2 R3
 mov R1 $4

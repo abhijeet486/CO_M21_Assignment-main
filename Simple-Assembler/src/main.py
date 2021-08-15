@@ -3,7 +3,8 @@ import re
 from assemble import ISA16bit
 import check_error
 
-input = sys.stdin
+input = open(r"Simple-Assembler/tests/error_test1",'r')
+
 
 var_dict = {}
 labels = {}
@@ -128,6 +129,7 @@ def main():
     input.seek(0)
     if(flag):
         for line in input.readlines():
+            line = re.sub(r"(?a:\s+)"," ",line)
             if(line!=" " and line!="\n" and line !=""):
                 line = line.split("\n")[0]
                 pc+=1
