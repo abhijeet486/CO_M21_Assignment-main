@@ -1,11 +1,7 @@
-
-
 import re
-
 
 nonmem = 0
 mem = 1
-
 
 class ISA16bit:
     def __init__(self):
@@ -50,9 +46,6 @@ class ISA16bit:
             'R6' : '110',
             'FLAGS' : '111'
             }
-
-    def update_register(self,r,value):
-        self.registers[r] = value
 
     def type_check(self,str,t,var,label):
         content = str.split(" ")
