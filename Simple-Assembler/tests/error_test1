@@ -1,7 +1,10 @@
 var x
+
+
 mov R1 $4
 mov R2 $4
 cmp R1 R2
+var y
 mov R3 FLAGS
 mov R4 $1
 cmp R3 R4

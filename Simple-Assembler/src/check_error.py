@@ -16,12 +16,18 @@ def check_inst(str,IS,pc,temp_var):
     print("Error: Wrong syntax used for instructions , line",pc-temp_var)
     return(False)
 
-def is_valid_var_dec(w,labels,pc,count_var):
+def is_valid_var_dec(w,labels,var_dict,pc,count_var,line_count):
     flag = True
+    if(w[0][:-1] in  var_dict):
+        print("Error: Genral Syntax Error, line",line_count)
+        return(False)
+    if(w[1] in ["R0","R1","R2","R3","R4","R5","R6","FLAGS"]):
+        print("Error : Genral Syntax Error , line",line_count)
+        return(False)
     if(w[1] in labels):
-        print("Error: Misuse of labels as variables, line",pc-count_var)
+        print("Error: Misuse of labels as variables, line",line_count)
         flag = False
     if(pc>count_var):
-        print("Error: Variables not declared at the beginning , line",pc-count_var)
+        print("Error: Variables not declared at the beginning , line",line_count)
         flag = False
     return(flag)

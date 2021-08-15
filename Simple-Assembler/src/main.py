@@ -5,8 +5,6 @@ import check_error
 
 input = sys.stdin
 
-#input = open(r"Simple-Assembler/tests/error_test1","r")
-
 var_dict = {}
 labels = {}
 hlt_count = 0
@@ -15,11 +13,12 @@ pc = 0
 inst_count = 0
 temp_var = 0
 
-#//////////////////////
 
 def instr_limit():
     global inst_count,temp_var,labels
+    line_count=0
     for lines in input.readlines():
+        line_count+=1
         for i in lines.split("\n"):
             i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
             if(i!="" and i!=" "):
@@ -31,20 +30,23 @@ def instr_limit():
                     print("Error : No of Instructions exceed ISA limit")
                     exit()
                 if(i=="hlt" and hlt_count==1):
-                    print("Error: hlt not being used as the last instruction , line",inst_count)
+                    print("Error: hlt not being used as the last instruction , line",line_count)
                     return(False)
                 if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",i)):
+                    if(w[0][:-1] in ["R0","R1","R2","R3","R4","R5","R6","FLAGS"]):
+                        print("Error : Genral Syntax Error , line",line_count)
+                        return(False)
                     if(not check_inst(" ".join(w[1:]),inst_count)):
-                        print("Error : Typos in instruction name or register name , line",inst_count)
+                        print("Error : Typos in instruction name or register name , line",line_count)
                         return(False)
                     else:
-                        if(w[0][:-1] in  var_dict):
-                            print("Error: Misuse of variables as labels, line",inst_count)
+                        if(labels[w[0][:-1]]!=-1 or w[0][:-1] in  var_dict):
+                            print("Error: Genral Syntax Error, line",line_count)
                             return(False)
                         else:
                             labels[w[0][:-1]] = inst_count - 1
-                elif(re.match("\Avar ([a-zA-Z_]+)([0-9]*)$",i)):
-                    if(check_error.is_valid_var_dec(w,labels,temp_var,temp_var-inst_count)):
+                elif(re.match("\Avar ([a-zA-Z_]+)([0-9]*)",i)):
+                    if(check_error.is_valid_var_dec(w,labels,var_dict,temp_var,temp_var-inst_count,line_count)):
                         var_dict[w[1]] = []
                     else:
                         return(False)
@@ -67,7 +69,7 @@ def label_table():
             i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
             if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",i)):
                 w = i.split(" ")
-                labels[w[0][:-1]] = inst_count - 1
+                labels[w[0][:-1]] = -1
     input.seek(0)
 
 
@@ -76,8 +78,6 @@ def variable(var):
     count_var +=1
     var_dict[var[1]] = [inst_count + count_var -1,'0000000000000000']
 
-
-#/////////////////
 
 def gettype(w):
     if(w[0]=='mov'):
@@ -106,24 +106,19 @@ def check_inst(str,line_no=pc-count_var):
 def check_line(line):
     line = re.sub(r'(\\[a-zA-Z])+'," ",line)
     w = line.split(" ")
-    if(re.match("[a-zA-z0-9_]+: ([a-zA-Z0-9]+[ ]*)+",line)):
+    if(re.match("[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",line)):
         type = gettype(w[1:])
         print(IS.binary(" ".join(w[1:]),type,var_dict,labels))
         labels[w[0][:-1]] = pc - count_var - 1
         if(w[1]!="cmp" and w[1] in IS.opcode_table):
             IS.registers["FLAGS"] = '0000000000000000'
-        return(1)
-    elif(re.match("\Avar [a-zA-Z0-9_]*$",line)):
+    elif(re.match("\Avar ([a-zA-Z_]+)([0-9]*)",line)):
         variable(w)
-        return(3)
     elif(w[0] in IS.opcode_table):
         type = gettype(w)
         print(IS.binary(line,type,var_dict,labels))
         if(w[0]!="cmp"):
             IS.registers["FLAGS"] = '0000000000000000'
-        return(2)
-    else:
-        return (4)
 
 def main():
     global pc
@@ -135,7 +130,7 @@ def main():
             if(line!=" " or line!="\n"):
                 line = line.split("\n")[0]
                 pc+=1
-                line_type = check_line(line)
+                check_line(line)
     input.close()
 
     
