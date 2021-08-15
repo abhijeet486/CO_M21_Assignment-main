@@ -20,7 +20,8 @@ def instr_limit():
     for lines in input.readlines():
         line_count+=1
         for i in lines.split("\n"):
-            i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
+            i = i.replace("\t"," ")
+            i = re.sub(r'(\\[a-zA-Z])+'," ",i)
             if(i!="" and i!=" "):
                 w = i.split(" ")
                 if(w[0]!="var"):
@@ -51,11 +52,11 @@ def instr_limit():
                     else:
                         return(False)
                 elif(w[0] in IS.opcode_table):
-                    if(not check_inst(i,inst_count)):
-                        print("Error : Typos in instruction name or register name , line",inst_count)
+                    if(not check_inst(i,line_count)):
+                        print("Error : Typos in instruction name or register name , line",line_count)
                         return(False)
                 else:
-                    print("Error : General Syntax Error, line",inst_count)
+                    print("Error : General Syntax Error, line",line_count)
     if(hlt_count==0):
         print("Error : Missing hlt instruction")
         return(False)
