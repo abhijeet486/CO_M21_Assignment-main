@@ -128,7 +128,7 @@ def main():
     input.seek(0)
     if(flag):
         for line in input.readlines():
-            if(line!=" " or line!="\n"):
+            if(line!=" " and line!="\n" and line !=""):
                 line = line.split("\n")[0]
                 pc+=1
                 check_line(line)
