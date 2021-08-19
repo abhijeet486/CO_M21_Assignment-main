@@ -20,8 +20,7 @@ def instr_limit():
     for lines in input.readlines():
         line_count+=1
         for i in lines.split("\n"):
-            i = i.replace("\t"," ")
-            i = re.sub(r'(\\[a-zA-Z])+'," ",i)
+            i = re.sub(r'((\[a-zA-Z])|[ ]|(\\[a-zA-Z]))+'," ",i)
             if(i!="" and i!=" "):
                 w = i.split(" ")
                 if(w[0]!="var"):
@@ -105,7 +104,6 @@ def check_inst(str,line_no=pc-count_var):
 
 
 def check_line(line):
-    line = re.sub(r'(\\[a-zA-Z])+'," ",line)
     w = line.split(" ")
     if(re.match("[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",line)):
         type = gettype(w[1:])
@@ -113,7 +111,7 @@ def check_line(line):
         labels[w[0][:-1]] = pc - count_var - 1
         if(w[1]!="cmp" and w[1] in IS.opcode_table):
             IS.registers["FLAGS"] = '0000000000000000'
-    elif(re.match("\Avar ([a-zA-Z_]+)([0-9]*)",line)):
+    elif(re.match("\Avar ([a-zA-Z_]+)([0-9]*)",line) or w[0]=="var" or re.match("([a-zA-Z_]+)([0-9]*)",w[1])):
         variable(w)
     elif(w[0] in IS.opcode_table):
         type = gettype(w)
@@ -128,6 +126,7 @@ def main():
     input.seek(0)
     if(flag):
         for line in input.readlines():
+            line = re.sub(r'((\[a-zA-Z])|[ ]|(\\[a-zA-Z]))+'," ",line)
             if(line!=" " and line!="\n" and line !=""):
                 line = line.split("\n")[0]
                 pc+=1
