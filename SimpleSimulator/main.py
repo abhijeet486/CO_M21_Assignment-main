@@ -18,6 +18,7 @@ def main():
         Reg.dump()
         PC.update(nextPC)
         cycle+=1
+    MEM.dump()
 
 if __name__=="__main__":
     main()

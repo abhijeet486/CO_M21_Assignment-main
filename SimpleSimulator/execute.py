@@ -67,19 +67,19 @@ class execute:
                 self.reg.registers['111'] = '0000000000000001'
         elif opcode == "01111":
             label = int(inst[8:],2)
-            return(False,label)
+            return(False,label - self.mem.pc)
         elif opcode == "10000":
             label = int(inst[8:],2)
             if(self.reg.registers['111'][13]=='1'):
-                return(False,label)
+                return(False, label - self.mem.pc)
         elif opcode == "10001":
             label = int(inst[8:],2)
             if(self.reg.registers['111'][-2]=='1'):
-                return(False,label)
+                return(False,label - self.mem.pc)
         elif opcode == "10010":
             label = int(inst[8:],2)
             if(self.reg.registers['111'][-1]=='1'):
-                return(False,label)
+                return(False,label - self.mem.pc)
         elif opcode == "10011":
             return(True,1)
         
