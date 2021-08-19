@@ -24,9 +24,13 @@ class execute:
         elif opcode =="00011":
             self.reg.registers[inst[10:13]] = self.reg.registers[inst[13:]]
         elif opcode == "00100":
-            self.reg.registers[inst[5:8]] = self.mem[inst[8:]]
+            self.mem.x_scatter += [cycle]
+            self.mem.y_scatter += [int(inst[8:],2)]
+            self.reg.registers[inst[5:8]] = self.mem.mem[inst[8:]]
         elif opcode == "00101":
-            self.mem[inst[8:]] = self.reg.registers[inst[5:8]]
+            self.mem.x_scatter += [cycle]
+            self.mem.y_scatter += [int(inst[8:],2)]
+            self.mem.mem[inst[8:]] = self.reg.registers[inst[5:8]]
         elif opcode == "00110":
             ans = int(self.reg.registers[inst[10:13]],2) * int(self.reg.registers[inst[13:]],2)
             if(ans>255):
@@ -67,17 +71,25 @@ class execute:
                 self.reg.registers['111'] = '0000000000000001'
         elif opcode == "01111":
             label = int(inst[8:],2)
+            self.mem.x_scatter += [cycle]
+            self.mem.y_scatter += [label]
             return(False,label - self.mem.pc)
         elif opcode == "10000":
             label = int(inst[8:],2)
+            self.mem.x_scatter += [cycle]
+            self.mem.y_scatter += [label]
             if(self.reg.registers['111'][13]=='1'):
                 return(False, label - self.mem.pc)
         elif opcode == "10001":
             label = int(inst[8:],2)
+            self.mem.x_scatter += [cycle]
+            self.mem.y_scatter += [label]
             if(self.reg.registers['111'][-2]=='1'):
                 return(False,label - self.mem.pc)
         elif opcode == "10010":
             label = int(inst[8:],2)
+            self.mem.x_scatter += [cycle]
+            self.mem.y_scatter += [label]
             if(self.reg.registers['111'][-1]=='1'):
                 return(False,label - self.mem.pc)
         elif opcode == "10011":
