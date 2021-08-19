@@ -1,6 +1,9 @@
 {
     "python.analysis.extraPaths": [
         "ISA16bit",
-        "assemble"
+        "assemble",
+        "programcounter",
+        "memory",
+        "Registers"
     ]
 }

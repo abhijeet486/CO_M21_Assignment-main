@@ -3,7 +3,7 @@ import re
 from assemble import ISA16bit
 import check_error
 
-input = open(r"Simple-Assembler/tests/error_test1",'r')
+input = sys.stdin
 
 
 var_dict = {}
@@ -22,7 +22,7 @@ def instr_limit():
         line_count+=1
         for i in lines.split("\n"):
             i = i.replace("\t"," ")
-            i = re.sub(r'(\\[a-zA-Z])+'," ",i)
+            i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
             if(i!="" and i!=" "):
                 w = i.split(" ")
                 if(w[0]!="var"):
@@ -129,7 +129,8 @@ def main():
     input.seek(0)
     if(flag):
         for line in input.readlines():
-            line = re.sub(r"(?a:\s+)"," ",line)
+            line.replace("\t"," ")
+            line = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",line)
             if(line!=" " and line!="\n" and line !=""):
                 line = line.split("\n")[0]
                 pc+=1
