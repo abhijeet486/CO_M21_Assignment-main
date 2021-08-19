@@ -1,5 +1,5 @@
 class Registers:
-    def __init__(self) -> None:
+    def __init__(self):
         self.registers={
             '000' : '0000000000000000',
             '001' : '0000000000000000',
