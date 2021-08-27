@@ -1,4 +1,6 @@
 import sys
+"""import matplotlib.pyplot as plt
+import numpy as np"""
 
 class memory:
     def __init__(self):
@@ -31,5 +33,6 @@ class memory:
         """x = np.array[self.x_scatter]
         y = np.array[self.y_scatter]
         plt.scatter(x,y)
-        plt.show()"""
+        plt.show()
+        plt.savefig('Bounus_plot.png')"""
         pass
