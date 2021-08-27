@@ -1,6 +1,6 @@
 import sys
-"""import matplotlib.pyplot as plt
-import numpy as np"""
+import matplotlib.pyplot as plt
+import numpy as np
 
 class memory:
     def __init__(self):
@@ -21,7 +21,7 @@ class memory:
         self.pc = pc
         inst = self.mem["{0:08b}".format(pc)]
         self.x_scatter+=[cycle]
-        self.y_scatter+=[inst]
+        self.y_scatter+=[pc]
         return(inst)
 
     def dump(self):
@@ -30,9 +30,8 @@ class memory:
         self.scatterplot()
 
     def scatterplot(self):
-        """x = np.array[self.x_scatter]
-        y = np.array[self.y_scatter]
+        x = self.x_scatter
+        y = self.y_scatter
         plt.scatter(x,y)
         plt.show()
-        plt.savefig('Bounus_plot.png')"""
-        pass
+        plt.savefig('./Bounus_plot.png')
