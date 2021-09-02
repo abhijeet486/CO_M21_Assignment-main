@@ -21,7 +21,7 @@ class memory:
         self.pc = pc
         inst = self.mem["{0:08b}".format(pc)]
         self.x_scatter+=[cycle]
-        self.y_scatter+=[inst]
+        self.y_scatter+=[pc]
         return(inst)
 
     def dump(self):
