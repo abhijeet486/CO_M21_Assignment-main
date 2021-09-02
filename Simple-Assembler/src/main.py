@@ -22,6 +22,7 @@ def instr_limit():
         line_count+=1
         for i in lines.split("\n"):
             i = i.replace("\t"," ")
+            i = re.sub("^[ ]+","",i)
             i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
             if(i!="" and i!=" "):
                 w = i.split(" ")
@@ -68,6 +69,7 @@ def label_table():
     global labels
     for lines in input.readlines():
         for i in lines.split("\n"):
+            i = i.replace("\t"," ")
             i = re.sub(r'((\\[a-zA-Z])|[] ])+'," ",i)
             if(re.match(r"[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",i)):
                 w = i.split(" ")
@@ -106,6 +108,7 @@ def check_inst(str,line_no=pc-count_var):
 
 
 def check_line(line):
+    line = line.replace("\t"," ")
     line = re.sub(r'(\\[a-zA-Z])+'," ",line)
     w = line.split(" ")
     if(re.match("[a-zA-z0-9_]+: ([a-zA-Z]+[0-9]*[ ]*)+",line)):

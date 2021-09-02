@@ -8,9 +8,11 @@ class execute:
         opcode = inst[:5]
         if opcode == "00000":
             ans = int(self.reg.registers[inst[10:13]],2) + int(self.reg.registers[inst[13:]],2)
-            if(ans>255):
-                ans = ans%255
+            if(ans>65535):
+                ans = ans%65536
                 self.reg.registers['111']='0000000000001000'
+            else:
+                self.reg.registers['111']='0000000000000000'
             self.reg.registers[inst[7:10]] = "{0:016b}".format(ans) 
             return(False,1)
         elif opcode == "00001":
@@ -18,6 +20,8 @@ class execute:
             if(ans<0):
                 ans = 0
                 self.reg.registers['111']='0000000000001000'
+            else:
+                self.reg.registers['111']='0000000000000000'
             self.reg.registers[inst[7:10]] = "{0:016b}".format(ans)
         elif opcode=="00010":
             self.reg.registers[inst[5:8]] = '{:016b}'.format(int(inst[8:],2))
@@ -37,9 +41,11 @@ class execute:
             self.reg.registers['111']='0000000000000000'
         elif opcode == "00110":
             ans = int(self.reg.registers[inst[10:13]],2) * int(self.reg.registers[inst[13:]],2)
-            if(ans>255):
-                ans = ans%255
+            if(ans>65535):
+                ans = ans%65536
                 self.reg.registers['111']='0000000000001000'
+            else:
+                self.reg.registers['111']='0000000000000000'
             self.reg.registers[inst[7:10]] = "{0:016b}".format(ans)
             return(False,1)
         elif opcode == "00111":
@@ -49,12 +55,12 @@ class execute:
             self.reg.registers['001'] = '{0:016b}'.format(ans)
             self.reg.registers['111']='0000000000000000'
         elif opcode == "01000":
-            ans = self.reg.registers[inst[5:8]] >> int(inst[8:],2)
-            self.reg.registers[inst[5:8]] = '{0:016b}'.format(ans)
+            ans = "{0:016b}".format(int(self.reg.registers[inst[5:8]],2) >> int(inst[8:],2))
+            self.reg.registers[inst[5:8]] = ans
             self.reg.registers['111']='0000000000000000'
         elif opcode == "01001":
-            ans = self.reg.registers[inst[5:8]] << int(inst[8:],2)
-            self.reg.registers[inst[5:8]] = '{0:016b}'.format(ans)
+            ans = "{0:016b}".format(int(self.reg.registers[inst[5:8]],2) << int(inst[8:],2))
+            self.reg.registers[inst[5:8]] = ans
             self.reg.registers['111']='0000000000000000'
         elif opcode == "01010":
             ans = int(self.reg.registers[inst[10:13]],2) ^ int(self.reg.registers[inst[13:]],2)
@@ -69,7 +75,8 @@ class execute:
             self.reg.registers[inst[7:10]] = "{0:016b}".format(ans)
             self.reg.registers['111']='0000000000000000'
         elif opcode == "01101":
-            self.reg.registers[inst[10:13]] = ~ self.reg.registers[inst[13:]]
+            ans = 65535 - int(self.reg.registers[inst[13:]],2)
+            self.reg.registers[inst[10:13]] = "{0:016b}".format(ans)
             self.reg.registers['111']='0000000000000000'
         elif opcode == "01110":
             op1 = self.reg.registers[inst[10:13]]
@@ -90,26 +97,28 @@ class execute:
             label = int(inst[8:],2)
             self.mem.x_scatter += [cycle]
             self.mem.y_scatter += [label]
-            self.reg.registers['111']='0000000000000000'
             if(self.reg.registers['111'][13]=='1'):
+                self.reg.registers['111']='0000000000000000'
                 return(False, label - self.mem.pc)
+            self.reg.registers['111']='0000000000000000'
         elif opcode == "10001":
             label = int(inst[8:],2)
             self.mem.x_scatter += [cycle]
             self.mem.y_scatter += [label]
-            self.reg.registers['111']='0000000000000000'
-            if(self.reg.registers['111'][-2]=='1'):
+            if(self.reg.registers['111'][14]=='1'):
+                self.reg.registers['111']='0000000000000000'
                 return(False,label - self.mem.pc)
+            self.reg.registers['111']='0000000000000000'
         elif opcode == "10010":
             label = int(inst[8:],2)
             self.mem.x_scatter += [cycle]
             self.mem.y_scatter += [label]
-            self.reg.registers['111']='0000000000000000'
-            if(self.reg.registers['111'][-1]=='1'):
+            if(self.reg.registers['111'][15]=='1'):
+                self.reg.registers['111']='0000000000000000'
                 return(False,label - self.mem.pc)
+            self.reg.registers['111']='0000000000000000'
         elif opcode == "10011":
             self.reg.registers['111']='0000000000000000'
             return(True,1)
-        
         return(False,1)
 

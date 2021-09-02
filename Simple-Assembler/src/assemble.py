@@ -23,7 +23,7 @@ class ISA16bit:
             "jmp": ('01111',mem,'E',1,0,True),
             "jlt": ('10000',mem,'E',1,0,True),
             "jgt": ('10001',mem,'E',1,0,True),
-            "jeq": ('10010',mem,'E',1,0,True),
+            "je": ('10010',mem,'E',1,0,True),
             "hlt": ('10011',nonmem,'F',0,0,False)
         }
         self.registers={
